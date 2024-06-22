@@ -47,7 +47,7 @@ func (h *Handler) ListTasks() echo.HandlerFunc {
 func (h *Handler) CreateTask() echo.HandlerFunc {
 	type request struct {
 		Name   string            `json:"name" validate:"required"`
-		Status models.TaskStatus `json:"status" validate:"required,oneof=0 1"`
+		Status models.TaskStatus `json:"status" validate:"oneof=0 1" default:"0"`
 	}
 	type response struct {
 		Data models.Task `json:"data" validate:"required"`
@@ -86,8 +86,8 @@ func (h *Handler) CreateTask() echo.HandlerFunc {
 // @Router			/tasks/{taskId} [put]
 func (h *Handler) UpdateTask() echo.HandlerFunc {
 	type request struct {
-		Name   string            `json:"name" validate:"required"`
-		Status models.TaskStatus `json:"status" validate:"required,oneof=0 1"`
+		Name   string             `json:"name" validate:"required"`
+		Status *models.TaskStatus `json:"status" validate:"required,oneof=0 1"`
 	}
 	type response struct {
 		Data models.Task `json:"data" validate:"required"`
@@ -109,7 +109,7 @@ func (h *Handler) UpdateTask() echo.HandlerFunc {
 		task, err := h.controller.Task.Update(ctx, controller.UpdateTaskParams{
 			ID:     taskId,
 			Name:   req.Name,
-			Status: req.Status,
+			Status: *req.Status,
 		})
 		if err != nil {
 			if errors.Is(err, controller.ErrNotFound) {
