@@ -17,8 +17,14 @@ func Init(ctx context.Context, _logLevel string) (context.Context, error) {
 	}
 
 	zapConfig := zap.NewProductionConfig()
+	if logLevel == zapcore.DebugLevel {
+		zapConfig = zap.NewDevelopmentConfig()
+		zapConfig.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	}
+
 	zapConfig.Level = zap.NewAtomicLevelAt(logLevel)
-	logger, err := zapConfig.Build()
+
+	logger, err := zapConfig.Build(zap.AddCallerSkip(1))
 	if err != nil {
 		return nil, fmt.Errorf("failed to build logger: %w", err)
 	}
