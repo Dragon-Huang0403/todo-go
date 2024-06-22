@@ -1,15 +1,33 @@
 package main
 
-import "time"
+import (
+	"fmt"
+	"time"
 
-type Config struct {
+	"github.com/dragon-huang0403/todo-go/pkg/config"
+)
+
+type AppConfig struct {
 	Operation OperationConfig `koanf:"operation"`
 }
 
-func (Config) Default() Config {
-	return Config{
+func (AppConfig) Default() AppConfig {
+	return AppConfig{
 		Operation: OperationConfig{}.Default(),
 	}
+}
+
+func getAppConfig(configFile string) (*AppConfig, error) {
+	conf := config.Config{}.Default()
+	conf.ConfigFile = configFile
+
+	appConfig := AppConfig{}
+	err := config.GetConfig(conf, &appConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get config: %w", err)
+	}
+
+	return &appConfig, nil
 }
 
 type OperationConfig struct {

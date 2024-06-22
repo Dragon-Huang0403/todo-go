@@ -2,7 +2,10 @@ module github.com/dragon-huang0403/todo-go
 
 go 1.22.0
 
-require github.com/knadh/koanf v1.5.0
+require (
+	github.com/knadh/koanf v1.5.0
+	go.uber.org/zap v1.27.0
+)
 
 require (
 	github.com/fatih/structs v1.1.0 // indirect
@@ -11,5 +14,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.7.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40 // indirect
 )

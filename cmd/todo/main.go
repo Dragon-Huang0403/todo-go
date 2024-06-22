@@ -2,24 +2,29 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 
-	"github.com/dragon-huang0403/todo-go/pkg/config"
+	"github.com/dragon-huang0403/todo-go/pkg/logger"
+	"go.uber.org/zap"
 )
 
 var configFile string
 
-func main() {
+func init() {
 	flag.StringVar(&configFile, "config", "", "config file path")
 	flag.Parse()
+}
 
-	conf := config.Config{}.Default()
-	conf.ConfigFile = configFile
-
-	appConfig := Config{}
-	err := config.GetConfig(conf, &appConfig)
+func main() {
+	appConfig, err := getAppConfig(configFile)
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed to get config: %v", err)
 	}
-	fmt.Println(appConfig)
+
+	logger, err := logger.New(appConfig.Operation.LogLevel)
+	if err != nil {
+		log.Fatalf("failed to create logger: %v", err)
+	}
+
+	logger.Info("config", zap.Any("config", appConfig))
 }
