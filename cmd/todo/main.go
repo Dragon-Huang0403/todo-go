@@ -41,5 +41,14 @@ func main() {
 		log.Fatalf("failed to create logger: %v", err)
 	}
 
-	logger.Info(ctx, "config", zap.Any("config", appConfig))
+	logger.Info(ctx, "config loaded", zap.Any("config", appConfig))
+	logger.Info(ctx, "starting todo app")
+
+	// Start the todo app
+	err = Start(ctx, *appConfig, validator)
+	if err != nil {
+		logger.Error(ctx, "failed to start todo app", zap.Error(err))
+	}
+
+	logger.Info(ctx, "todo app stopped")
 }

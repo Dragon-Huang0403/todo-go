@@ -1,0 +1,35 @@
+basePath: /
+definitions:
+  handler.HealthCheck.response:
+    properties:
+      status:
+        example: OK
+        type: string
+    required:
+    - status
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: Todo Server API
+  title: Todo Server API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Health Check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.HealthCheck.response'
+      summary: Health Check
+      tags:
+      - Health
+schemes:
+- http
+swagger: "2.0"

@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"time"
 
+	httpserver "github.com/dragon-huang0403/todo-go/internal/http/server"
 	"github.com/dragon-huang0403/todo-go/pkg/config"
 )
 
 type AppConfig struct {
-	Operation OperationConfig `koanf:"operation" validate:"required"`
+	HTTPServer httpserver.Config `koanf:"http_server" validate:"required"`
+	Operation  OperationConfig   `koanf:"operation" validate:"required"`
 }
 
 func (AppConfig) Default() AppConfig {
 	return AppConfig{
-		Operation: OperationConfig{}.Default(),
+		HTTPServer: httpserver.Config{}.Default(),
+		Operation:  OperationConfig{}.Default(),
 	}
 }
 
