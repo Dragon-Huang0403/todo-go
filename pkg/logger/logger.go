@@ -29,16 +29,20 @@ func Init(ctx context.Context, _logLevel string) (context.Context, error) {
 		return nil, fmt.Errorf("failed to build logger: %w", err)
 	}
 
-	ctx = context.WithValue(ctx, ctxKey{}, logger)
+	ctx = ContextWithLogger(ctx, logger)
 	return ctx, nil
 }
 
 func Flush(ctx context.Context) error {
-	logger := loggerFromContext(ctx)
+	logger := LoggerFromContext(ctx)
 	return logger.Sync()
 }
 
-func loggerFromContext(ctx context.Context) *zap.Logger {
+func ContextWithLogger(ctx context.Context, logger *zap.Logger) context.Context {
+	return context.WithValue(ctx, ctxKey{}, logger)
+}
+
+func LoggerFromContext(ctx context.Context) *zap.Logger {
 	logger, ok := ctx.Value(ctxKey{}).(*zap.Logger)
 	if !ok {
 		fmt.Println("failed to get logger from context")
@@ -48,25 +52,25 @@ func loggerFromContext(ctx context.Context) *zap.Logger {
 }
 
 func Debug(ctx context.Context, msg string, fields ...zapcore.Field) {
-	loggerFromContext(ctx).Debug(msg, fields...)
+	LoggerFromContext(ctx).Debug(msg, fields...)
 }
 
 func Info(ctx context.Context, msg string, fields ...zapcore.Field) {
-	loggerFromContext(ctx).Info(msg, fields...)
+	LoggerFromContext(ctx).Info(msg, fields...)
 }
 
 func Warn(ctx context.Context, msg string, fields ...zapcore.Field) {
-	loggerFromContext(ctx).Warn(msg, fields...)
+	LoggerFromContext(ctx).Warn(msg, fields...)
 }
 
 func Error(ctx context.Context, msg string, fields ...zapcore.Field) {
-	loggerFromContext(ctx).Error(msg, fields...)
+	LoggerFromContext(ctx).Error(msg, fields...)
 }
 
 func Fatal(ctx context.Context, msg string, fields ...zapcore.Field) {
-	loggerFromContext(ctx).Fatal(msg, fields...)
+	LoggerFromContext(ctx).Fatal(msg, fields...)
 }
 
 func Level(ctx context.Context) zapcore.Level {
-	return loggerFromContext(ctx).Level()
+	return LoggerFromContext(ctx).Level()
 }
