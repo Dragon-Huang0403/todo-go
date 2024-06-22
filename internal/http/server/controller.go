@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dragon-huang0403/todo-go/internal/controller"
 	"github.com/dragon-huang0403/todo-go/pkg/logger"
 	"github.com/dragon-huang0403/todo-go/pkg/validator"
 	"go.uber.org/zap"
@@ -13,8 +14,8 @@ import (
 
 // Start will block until the server is shutdown
 // And will start graceful shutdown when the context is done
-func Start(ctx context.Context, config Config, validator *validator.Validator) error {
-	server := NewServer(ctx, validator)
+func Start(ctx context.Context, config Config, ctl *controller.Controller, validator *validator.Validator) error {
+	server := NewServer(ctx, ctl, validator)
 
 	// start server
 	go func() {

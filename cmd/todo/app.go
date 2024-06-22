@@ -4,7 +4,10 @@ import (
 	"context"
 	"time"
 
+	"github.com/dragon-huang0403/todo-go/internal/controller"
+	"github.com/dragon-huang0403/todo-go/internal/db"
 	httpserver "github.com/dragon-huang0403/todo-go/internal/http/server"
+	"github.com/dragon-huang0403/todo-go/internal/store"
 	"github.com/dragon-huang0403/todo-go/pkg/logger"
 	"github.com/dragon-huang0403/todo-go/pkg/validator"
 	"go.uber.org/zap"
@@ -14,8 +17,12 @@ import (
 func Start(ctx context.Context, config AppConfig, validator *validator.Validator) error {
 	wg, ctx := errgroup.WithContext(ctx)
 
+	db := db.New()
+	store := store.New(db)
+	controller := controller.New(store)
+
 	wg.Go(func() error {
-		return httpserver.Start(ctx, config.HTTPServer, validator)
+		return httpserver.Start(ctx, config.HTTPServer, controller, validator)
 	})
 
 	<-ctx.Done()
