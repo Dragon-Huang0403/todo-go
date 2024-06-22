@@ -13,23 +13,23 @@ var (
 	ErrOnlyPointer   = errors.New("only pointer")
 )
 
-type model string
+type Model string
 
 const (
-	Task model = "task"
+	Task Model = "task"
 )
 
 type Database interface {
-	Get(model model, id uuid.UUID) (interface{}, error)
+	Get(model Model, id uuid.UUID) (interface{}, error)
 	// List by create order
-	List(model model) ([]interface{}, error)
-	Create(model model, id uuid.UUID, value interface{}) error
-	Update(model model, id uuid.UUID, value interface{}) error
-	Delete(model model, id uuid.UUID) error
+	List(model Model) ([]interface{}, error)
+	Create(model Model, id uuid.UUID, value interface{}) error
+	Update(model Model, id uuid.UUID, value interface{}) error
+	Delete(model Model, id uuid.UUID) error
 }
 
 type databaseManager struct {
-	database map[model]*modelDatabase
+	database map[Model]*modelDatabase
 }
 
 type modelDatabase struct {
@@ -40,7 +40,7 @@ type modelDatabase struct {
 
 func New() Database {
 	db := &databaseManager{
-		database: map[model]*modelDatabase{
+		database: map[Model]*modelDatabase{
 			Task: {
 				dataMap: map[uuid.UUID]interface{}{},
 				orders:  []uuid.UUID{},
@@ -50,7 +50,7 @@ func New() Database {
 	return db
 }
 
-func (db *databaseManager) Get(model model, id uuid.UUID) (interface{}, error) {
+func (db *databaseManager) Get(model Model, id uuid.UUID) (interface{}, error) {
 	modelDB := db.database[model]
 	item, ok := modelDB.dataMap[id]
 	if !ok {
@@ -60,7 +60,7 @@ func (db *databaseManager) Get(model model, id uuid.UUID) (interface{}, error) {
 	return item, nil
 }
 
-func (db *databaseManager) List(model model) ([]interface{}, error) {
+func (db *databaseManager) List(model Model) ([]interface{}, error) {
 	modelDB := db.database[model]
 
 	list := make([]interface{}, 0, len(modelDB.orders))
@@ -71,7 +71,7 @@ func (db *databaseManager) List(model model) ([]interface{}, error) {
 	return list, nil
 }
 
-func (db *databaseManager) Create(model model, id uuid.UUID, value interface{}) error {
+func (db *databaseManager) Create(model Model, id uuid.UUID, value interface{}) error {
 	if err := isPointer(value); err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func (db *databaseManager) Create(model model, id uuid.UUID, value interface{}) 
 	return nil
 }
 
-func (db *databaseManager) Update(model model, id uuid.UUID, value interface{}) error {
+func (db *databaseManager) Update(model Model, id uuid.UUID, value interface{}) error {
 	if err := isPointer(value); err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (db *databaseManager) Update(model model, id uuid.UUID, value interface{}) 
 	return nil
 }
 
-func (db *databaseManager) Delete(model model, id uuid.UUID) error {
+func (db *databaseManager) Delete(model Model, id uuid.UUID) error {
 	if _, err := db.Get(model, id); err != nil {
 		return err
 	}
