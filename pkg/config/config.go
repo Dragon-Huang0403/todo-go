@@ -20,9 +20,6 @@ type Config struct {
 	// path of the config file
 	ConfigFile string
 
-	// Prefix of environment variables
-	EnvPrefix string
-
 	// Delim of environment variables
 	EnvDelim string
 }
@@ -30,7 +27,6 @@ type Config struct {
 func (c Config) Default() Config {
 	return Config{
 		ConfigFile: "config.toml",
-		EnvPrefix:  "",
 		EnvDelim:   "__",
 	}
 }
@@ -126,7 +122,7 @@ func GetConfig[T any](conf Config, c Default[T]) (err error) {
 	}
 
 	// Allows quick Env overwrite.
-	if err = k.Load(env.Provider(conf.EnvPrefix, conf.EnvDelim, strings.ToLower), nil); err != nil {
+	if err = k.Load(env.Provider("", conf.EnvDelim, strings.ToLower), nil); err != nil {
 		return err
 	}
 
