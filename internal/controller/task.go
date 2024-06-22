@@ -19,10 +19,10 @@ type Task interface {
 }
 
 type taskImpl struct {
-	store *store.Store
+	store store.Store
 }
 
-func NewTask(store *store.Store) Task {
+func NewTask(store store.Store) Task {
 	return &taskImpl{
 		store: store,
 	}

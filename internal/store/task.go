@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *Store) GetTask(id uuid.UUID) (*models.Task, error) {
+func (s *storeImpl) GetTask(id uuid.UUID) (*models.Task, error) {
 	task, err := s.db.Get(db.Task, id)
 	if err != nil {
 		return nil, err
@@ -17,7 +17,7 @@ func (s *Store) GetTask(id uuid.UUID) (*models.Task, error) {
 	return models.Task{}.FromDB(task)
 }
 
-func (s *Store) ListTasks() ([]*models.Task, error) {
+func (s *storeImpl) ListTasks() ([]*models.Task, error) {
 	tasks, err := s.db.List(db.Task)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ type CreateTaskParams struct {
 	Status models.TaskStatus
 }
 
-func (s *Store) CreateTask(params CreateTaskParams) (*models.Task, error) {
+func (s *storeImpl) CreateTask(params CreateTaskParams) (*models.Task, error) {
 	task := &models.Task{
 		ID:        uuid.New(),
 		Name:      params.Name,
@@ -63,7 +63,7 @@ type UpdateTaskParams struct {
 	Status models.TaskStatus
 }
 
-func (s *Store) UpdateTask(params UpdateTaskParams) (*models.Task, error) {
+func (s *storeImpl) UpdateTask(params UpdateTaskParams) (*models.Task, error) {
 	task, err := s.GetTask(params.ID)
 	if err != nil {
 		return nil, err
@@ -80,6 +80,6 @@ func (s *Store) UpdateTask(params UpdateTaskParams) (*models.Task, error) {
 	return task, nil
 }
 
-func (s *Store) DeleteTask(id uuid.UUID) error {
+func (s *storeImpl) DeleteTask(id uuid.UUID) error {
 	return s.db.Delete(db.Task, id)
 }
