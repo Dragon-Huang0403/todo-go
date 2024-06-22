@@ -32,6 +32,19 @@ type databaseManager struct {
 	database map[Model]*modelDatabase
 }
 
+func (db *databaseManager) getModelDB(model Model) *modelDatabase {
+	modelDB, ok := db.database[model]
+	if !ok {
+		modelDB = &modelDatabase{
+			dataMap: map[uuid.UUID]interface{}{},
+			orders:  []uuid.UUID{},
+		}
+		db.database[model] = modelDB
+	}
+
+	return modelDB
+}
+
 type modelDatabase struct {
 	dataMap map[uuid.UUID]interface{}
 
@@ -40,18 +53,13 @@ type modelDatabase struct {
 
 func New() Database {
 	db := &databaseManager{
-		database: map[Model]*modelDatabase{
-			Task: {
-				dataMap: map[uuid.UUID]interface{}{},
-				orders:  []uuid.UUID{},
-			},
-		},
+		database: map[Model]*modelDatabase{},
 	}
 	return db
 }
 
 func (db *databaseManager) Get(model Model, id uuid.UUID) (interface{}, error) {
-	modelDB := db.database[model]
+	modelDB := db.getModelDB(model)
 	item, ok := modelDB.dataMap[id]
 	if !ok {
 		return nil, ErrNotFound
@@ -61,7 +69,7 @@ func (db *databaseManager) Get(model Model, id uuid.UUID) (interface{}, error) {
 }
 
 func (db *databaseManager) List(model Model) ([]interface{}, error) {
-	modelDB := db.database[model]
+	modelDB := db.getModelDB(model)
 
 	list := make([]interface{}, 0, len(modelDB.orders))
 	for _, id := range modelDB.orders {
@@ -76,7 +84,7 @@ func (db *databaseManager) Create(model Model, id uuid.UUID, value interface{}) 
 		return err
 	}
 
-	modelDB := db.database[model]
+	modelDB := db.getModelDB(model)
 	if _, ok := modelDB.dataMap[id]; ok {
 		return ErrAlreadyExists
 	}
@@ -95,7 +103,8 @@ func (db *databaseManager) Update(model Model, id uuid.UUID, value interface{}) 
 		return err
 	}
 
-	db.database[model].dataMap[id] = value
+	modelDB := db.getModelDB(model)
+	modelDB.dataMap[id] = value
 	return nil
 }
 
@@ -104,7 +113,7 @@ func (db *databaseManager) Delete(model Model, id uuid.UUID) error {
 		return err
 	}
 
-	modelDB := db.database[model]
+	modelDB := db.getModelDB(model)
 	delete(modelDB.dataMap, id)
 
 	for i, item := range modelDB.orders {
