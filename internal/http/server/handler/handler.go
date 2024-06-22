@@ -1,7 +1,21 @@
 package handler
 
-type Handler struct{}
+import "github.com/dragon-huang0403/todo-go/internal/controller"
 
-func New() *Handler {
-	return &Handler{}
+type Handler struct {
+	controller *controller.Controller
+}
+
+func New(controller *controller.Controller) *Handler {
+	return &Handler{
+		controller: controller,
+	}
+}
+
+type Failure struct {
+	Message string `json:"message" validate:"required"`
+}
+
+type Success struct {
+	Success bool `json:"success" validate:"required"`
 }

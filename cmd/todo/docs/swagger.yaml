@@ -1,5 +1,33 @@
 basePath: /
 definitions:
+  handler.CreateTask.request:
+    properties:
+      name:
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.TaskStatus'
+        enum:
+        - 0
+        - 1
+    required:
+    - name
+    - status
+    type: object
+  handler.CreateTask.response:
+    properties:
+      data:
+        $ref: '#/definitions/models.Task'
+    required:
+    - data
+    type: object
+  handler.Failure:
+    properties:
+      message:
+        type: string
+    required:
+    - message
+    type: object
   handler.HealthCheck.response:
     properties:
       status:
@@ -8,6 +36,77 @@ definitions:
     required:
     - status
     type: object
+  handler.ListTasks.response:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Task'
+        type: array
+    required:
+    - data
+    type: object
+  handler.Success:
+    properties:
+      success:
+        type: boolean
+    required:
+    - success
+    type: object
+  handler.UpdateTask.request:
+    properties:
+      name:
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.TaskStatus'
+        enum:
+        - 0
+        - 1
+    required:
+    - name
+    - status
+    type: object
+  handler.UpdateTask.response:
+    properties:
+      data:
+        $ref: '#/definitions/models.Task'
+    required:
+    - data
+    type: object
+  models.Task:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+      id:
+        format: uuid
+        type: string
+      name:
+        description: task name
+        example: account name
+        type: string
+      status:
+        description: 0 represents an incomplete task, 1 represents a completed task
+        example: 0
+        type: integer
+      updated_at:
+        format: date-time
+        type: string
+    required:
+    - created_at
+    - id
+    - name
+    - status
+    - updated_at
+    type: object
+  models.TaskStatus:
+    enum:
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - TaskStatusIncomplete
+    - TaskStatusCompleted
 host: localhost:8000
 info:
   contact: {}
@@ -30,6 +129,109 @@ paths:
       summary: Health Check
       tags:
       - Health
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: List Tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ListTasks.response'
+      summary: List Tasks
+      tags:
+      - Task
+    post:
+      consumes:
+      - application/json
+      description: Create Task
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateTask.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.CreateTask.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Failure'
+      summary: Create Task
+      tags:
+      - Task
+  /tasks/{taskId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Task
+      parameters:
+      - description: task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Failure'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Failure'
+      summary: Delete Task
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      description: Update Task
+      parameters:
+      - description: task id
+        in: path
+        name: taskId
+        required: true
+        type: string
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateTask.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.UpdateTask.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.Failure'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Failure'
+      summary: Update Task
+      tags:
+      - Task
 schemes:
 - http
 swagger: "2.0"
