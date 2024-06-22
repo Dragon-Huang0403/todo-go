@@ -40,6 +40,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create logger: %v", err)
 	}
+	defer logger.Flush(ctx)
 
 	logger.Info(ctx, "config loaded", zap.Any("config", appConfig))
 	logger.Info(ctx, "starting todo app")

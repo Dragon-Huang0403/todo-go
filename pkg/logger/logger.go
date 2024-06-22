@@ -27,6 +27,11 @@ func Init(ctx context.Context, _logLevel string) (context.Context, error) {
 	return ctx, nil
 }
 
+func Flush(ctx context.Context) error {
+	logger := loggerFromContext(ctx)
+	return logger.Sync()
+}
+
 func loggerFromContext(ctx context.Context) *zap.Logger {
 	logger, ok := ctx.Value(ctxKey{}).(*zap.Logger)
 	if !ok {
