@@ -52,7 +52,7 @@ func (db *db) Get(model Model, id uuid.UUID) (interface{}, error) {
 // TODO: Implement sorting
 func (db *db) List(model Model) ([]interface{}, error) {
 	if _, ok := db.database[model]; !ok {
-		return nil, ErrNotFound
+		return []interface{}{}, nil
 	}
 
 	var list []interface{}
