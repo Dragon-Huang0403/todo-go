@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/dragon-huang0403/todo-go/pkg/logger"
+	"github.com/dragon-huang0403/todo-go/pkg/validator"
 	"go.uber.org/zap"
 )
 
@@ -19,6 +20,12 @@ func main() {
 	appConfig, err := getAppConfig(configFile)
 	if err != nil {
 		log.Fatalf("failed to get config: %v", err)
+	}
+
+	validator := validator.New()
+	err = validator.Validate(appConfig)
+	if err != nil {
+		log.Fatalf("failed to validate config: %v", err)
 	}
 
 	logger, err := logger.New(appConfig.Operation.LogLevel)

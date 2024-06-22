@@ -8,7 +8,7 @@ import (
 )
 
 type AppConfig struct {
-	Operation OperationConfig `koanf:"operation"`
+	Operation OperationConfig `koanf:"operation" validate:"required"`
 }
 
 func (AppConfig) Default() AppConfig {
@@ -31,8 +31,8 @@ func getAppConfig(configFile string) (*AppConfig, error) {
 }
 
 type OperationConfig struct {
-	LogLevel        string        `koanf:"log_level"`
-	ShutdownTimeout time.Duration `koanf:"shutdown_timeout"`
+	LogLevel        string        `koanf:"log_level" validate:"required,oneof=debug info warn error"`
+	ShutdownTimeout time.Duration `koanf:"shutdown_timeout" validate:"required"`
 }
 
 func (OperationConfig) Default() OperationConfig {
