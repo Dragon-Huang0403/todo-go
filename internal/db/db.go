@@ -13,74 +13,80 @@ var (
 	ErrOnlyPointer   = errors.New("only pointer")
 )
 
-type Model string
+type model string
 
 const (
-	Task Model = "task"
+	Task model = "task"
 )
 
 type Database interface {
-	Get(model Model, id uuid.UUID) (interface{}, error)
-	List(model Model) ([]interface{}, error)
-	Create(model Model, id uuid.UUID, value interface{}) error
-	Update(model Model, id uuid.UUID, value interface{}) error
-	Delete(model Model, id uuid.UUID) error
+	Get(model model, id uuid.UUID) (interface{}, error)
+	// List by create order
+	List(model model) ([]interface{}, error)
+	Create(model model, id uuid.UUID, value interface{}) error
+	Update(model model, id uuid.UUID, value interface{}) error
+	Delete(model model, id uuid.UUID) error
 }
 
-type db struct {
-	database map[Model]map[uuid.UUID]interface{}
+type databaseManager struct {
+	database map[model]*modelDatabase
+}
+
+type modelDatabase struct {
+	dataMap map[uuid.UUID]interface{}
+
+	orders []uuid.UUID
 }
 
 func New() Database {
-	return &db{
-		database: map[Model]map[uuid.UUID]interface{}{},
+	db := &databaseManager{
+		database: map[model]*modelDatabase{
+			Task: {
+				dataMap: map[uuid.UUID]interface{}{},
+				orders:  []uuid.UUID{},
+			},
+		},
 	}
+	return db
 }
 
-func (db *db) Get(model Model, id uuid.UUID) (interface{}, error) {
-	if _, ok := db.database[model]; !ok {
+func (db *databaseManager) Get(model model, id uuid.UUID) (interface{}, error) {
+	modelDB := db.database[model]
+	item, ok := modelDB.dataMap[id]
+	if !ok {
 		return nil, ErrNotFound
 	}
 
-	if _, ok := db.database[model][id]; !ok {
-		return nil, ErrNotFound
-	}
-
-	return db.database[model][id], nil
+	return item, nil
 }
 
-// TODO: Implement sorting
-func (db *db) List(model Model) ([]interface{}, error) {
-	if _, ok := db.database[model]; !ok {
-		return []interface{}{}, nil
-	}
+func (db *databaseManager) List(model model) ([]interface{}, error) {
+	modelDB := db.database[model]
 
-	var list []interface{}
-	for _, v := range db.database[model] {
-		list = append(list, v)
+	list := make([]interface{}, 0, len(modelDB.orders))
+	for _, id := range modelDB.orders {
+		list = append(list, modelDB.dataMap[id])
 	}
 
 	return list, nil
 }
 
-func (db *db) Create(model Model, id uuid.UUID, value interface{}) error {
+func (db *databaseManager) Create(model model, id uuid.UUID, value interface{}) error {
 	if err := isPointer(value); err != nil {
 		return err
 	}
 
-	if _, ok := db.database[model]; !ok {
-		db.database[model] = map[uuid.UUID]interface{}{}
-	}
-
-	if _, ok := db.database[model][id]; ok {
+	modelDB := db.database[model]
+	if _, ok := modelDB.dataMap[id]; ok {
 		return ErrAlreadyExists
 	}
 
-	db.database[model][id] = value
+	modelDB.dataMap[id] = value
+	modelDB.orders = append(modelDB.orders, id)
 	return nil
 }
 
-func (db *db) Update(model Model, id uuid.UUID, value interface{}) error {
+func (db *databaseManager) Update(model model, id uuid.UUID, value interface{}) error {
 	if err := isPointer(value); err != nil {
 		return err
 	}
@@ -89,16 +95,25 @@ func (db *db) Update(model Model, id uuid.UUID, value interface{}) error {
 		return err
 	}
 
-	db.database[model][id] = value
+	db.database[model].dataMap[id] = value
 	return nil
 }
 
-func (db *db) Delete(model Model, id uuid.UUID) error {
+func (db *databaseManager) Delete(model model, id uuid.UUID) error {
 	if _, err := db.Get(model, id); err != nil {
 		return err
 	}
 
-	delete(db.database[model], id)
+	modelDB := db.database[model]
+	delete(modelDB.dataMap, id)
+
+	for i, item := range modelDB.orders {
+		if item == id {
+			modelDB.orders = append(modelDB.orders[:i], modelDB.orders[i+1:]...)
+			break
+		}
+	}
+
 	return nil
 }
 
