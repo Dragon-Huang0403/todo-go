@@ -14,7 +14,7 @@ var (
 type TaskStatus int
 
 const (
-	TaskStatusIncomplete TaskStatus = iota + 1
+	TaskStatusIncomplete TaskStatus = iota
 	TaskStatusCompleted
 )
 
