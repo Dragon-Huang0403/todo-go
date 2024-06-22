@@ -18,7 +18,7 @@ import (
 // @Tags			Task
 // @Accept			json
 // @Produce		json
-// @Success		200 {object} handler.ListTasks.response "OK"
+// @Success		200	{object}	handler.ListTasks.response	"OK"
 // @Router			/tasks [get]
 func (h *Handler) ListTasks() echo.HandlerFunc {
 	type response struct {
@@ -42,7 +42,7 @@ func (h *Handler) ListTasks() echo.HandlerFunc {
 // @Produce		json
 // @Param			request	body		handler.CreateTask.request	true	"request body"
 // @Success		200		{object}	handler.CreateTask.response	"OK"
-// @Failure		400		{object}	Failure				"Bad Request"
+// @Failure		400		{object}	Failure						"Bad Request"
 // @Router			/tasks [post]
 func (h *Handler) CreateTask() echo.HandlerFunc {
 	type request struct {
@@ -81,8 +81,8 @@ func (h *Handler) CreateTask() echo.HandlerFunc {
 // @Param			taskId	path		string						true	"task id"
 // @Param			request	body		handler.UpdateTask.request	true	"request body"
 // @Success		200		{object}	handler.UpdateTask.response	"OK"
-// @Failure		400		{object}	Failure				"Bad Request"
-// @Failure		404		{object}	Failure				"Not Found"
+// @Failure		400		{object}	Failure						"Bad Request"
+// @Failure		404		{object}	Failure						"Not Found"
 // @Router			/tasks/{taskId} [put]
 func (h *Handler) UpdateTask() echo.HandlerFunc {
 	type request struct {
@@ -127,10 +127,10 @@ func (h *Handler) UpdateTask() echo.HandlerFunc {
 // @Tags			Task
 // @Accept			json
 // @Produce		json
-// @Param			taskId	path		string						true	"task id"
+// @Param			taskId	path		string	true	"task id"
 // @Success		200		{object}	Success	"OK"
-// @Failure		400		{object}	Failure				"Bad Request"
-// @Failure		404		{object}	Failure				"Not Found"
+// @Failure		400		{object}	Failure	"Bad Request"
+// @Failure		404		{object}	Failure	"Not Found"
 // @Router			/tasks/{taskId} [delete]
 func (h *Handler) DeleteTask() echo.HandlerFunc {
 	return func(c echo.Context) error {
