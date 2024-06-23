@@ -10,3 +10,6 @@ mock:
 	mockgen -destination ./internal/controller/mock/controller.go github.com/dragon-huang0403/todo-go/internal/controller Task
 	mockgen -destination ./internal/db/mock/db.go github.com/dragon-huang0403/todo-go/internal/db Database
 	mockgen -destination ./internal/store/mock/store.go github.com/dragon-huang0403/todo-go/internal/store Store
+
+build:
+	docker buildx bake --set "*.platform=linux/arm64" -f docker-bake.hcl
