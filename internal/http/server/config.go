@@ -9,7 +9,7 @@ type Config struct {
 
 func (Config) Default() Config {
 	return Config{
-		AddrPort:        "127.0.0.1:8000",
+		AddrPort:        "127.0.0.1:8080",
 		ShutdownTimeout: 5 * time.Second,
 	}
 }
