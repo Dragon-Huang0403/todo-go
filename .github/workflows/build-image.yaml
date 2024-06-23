@@ -1,4 +1,4 @@
-name: Build and Scan Container Image
+name: Build Container Image
 
 on:
   push:
@@ -75,7 +75,7 @@ jobs:
             type=edge
             type=raw,enable=${{ steps.tag.outputs.todo == '' }},value=build-{{date 'YYYY.MM.DD'}}-${{ github.run_id }}-{{sha}}
           flavor: |
-            latest=auto
+            latest=${{ matrix.release && 'auto' || 'false' }}
             suffix=${{ !matrix.release && '-debug' || ''}}
           bake-target: todo
 
