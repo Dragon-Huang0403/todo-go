@@ -92,7 +92,7 @@ jobs:
           sbom: true
           set: |
             ${{ inputs.platforms && format('base.platform={0}', inputs.platforms) || '' }}
-            todo.args.VERSION=${{ steps.metadata-core.outputs.version }}
+            todo.args.VERSION=${{ steps.metadata-todo.outputs.version }}
           files: |
             cwd://./docker-bake.hcl
             ${{ steps.metadata-todo.outputs.bake-file-annotations }}
