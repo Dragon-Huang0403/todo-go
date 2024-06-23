@@ -7,12 +7,12 @@ definitions:
       status:
         allOf:
         - $ref: '#/definitions/models.TaskStatus'
+        default: 0
         enum:
         - 0
         - 1
     required:
     - name
-    - status
     type: object
   handler.CreateTask.response:
     properties:
@@ -101,8 +101,8 @@ definitions:
     type: object
   models.TaskStatus:
     enum:
+    - 0
     - 1
-    - 2
     type: integer
     x-enum-varnames:
     - TaskStatusIncomplete
