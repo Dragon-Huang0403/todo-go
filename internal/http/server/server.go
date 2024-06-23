@@ -15,7 +15,7 @@ import (
 //	@version		1.0.0
 //	@description	Todo Server API
 //	@schemes		http
-//	@host			localhost:8000
+//	@host			localhost:8080
 //	@BasePath		/
 
 func NewServer(ctx context.Context, ctl *controller.Controller, validator *validator.Validator) *echo.Echo {

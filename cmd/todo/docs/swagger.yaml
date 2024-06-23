@@ -107,7 +107,7 @@ definitions:
     x-enum-varnames:
     - TaskStatusIncomplete
     - TaskStatusCompleted
-host: localhost:8000
+host: localhost:8080
 info:
   contact: {}
   description: Todo Server API
