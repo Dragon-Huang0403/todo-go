@@ -26,7 +26,8 @@ func TestListTasks(t *testing.T) {
 		data := []*models.Task{}
 		for range n {
 			item := models.Task{}
-			gofakeit.Struct(&item)
+			err := gofakeit.Struct(&item)
+			require.NoError(t, err)
 			data = append(data, &item)
 		}
 
@@ -73,13 +74,14 @@ func TestCreateTask(t *testing.T) {
 		c, rec := m.prepareContext(strings.NewReader(payload))
 
 		task := models.Task{}
-		gofakeit.Struct(&task)
+		err := gofakeit.Struct(&task)
+		require.NoError(t, err)
 
 		// stubs
 		m.mockTaskCtl.EXPECT().Create(gomock.Any(), EqJSON(t, payload)).Return(&task, nil)
 
 		// assert
-		err := m.handler.CreateTask()(c)
+		err = m.handler.CreateTask()(c)
 		require.NoError(t, err)
 		require.Equal(t, http.StatusOK, rec.Code)
 
@@ -102,14 +104,15 @@ func TestCreateTask(t *testing.T) {
 		c, rec := m.prepareContext(strings.NewReader(payload))
 
 		task := models.Task{}
-		gofakeit.Struct(&task)
+		err := gofakeit.Struct(&task)
+		require.NoError(t, err)
 
 		// stubs
 		createParams := fmt.Sprintf(`{"name":"%s","status":0}`, name)
 		m.mockTaskCtl.EXPECT().Create(gomock.Any(), EqJSON(t, createParams)).Return(&task, nil)
 
 		// assert
-		err := m.handler.CreateTask()(c)
+		err = m.handler.CreateTask()(c)
 		require.NoError(t, err)
 		require.Equal(t, http.StatusOK, rec.Code)
 	})
@@ -181,14 +184,15 @@ func TestUpdateTask(t *testing.T) {
 		c.SetParamValues(id)
 
 		task := models.Task{}
-		gofakeit.Struct(&task)
+		err := gofakeit.Struct(&task)
+		require.NoError(t, err)
 
 		// stubs
 		updateParams := fmt.Sprintf(`{"name":"%s","status":%d,"id":"%s"}`, name, status, id)
 		m.mockTaskCtl.EXPECT().Update(gomock.Any(), EqJSON(t, updateParams)).Return(&task, nil)
 
 		// assert
-		err := m.handler.UpdateTask()(c)
+		err = m.handler.UpdateTask()(c)
 		require.NoError(t, err)
 		require.Equal(t, http.StatusOK, rec.Code)
 
