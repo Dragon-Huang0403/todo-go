@@ -13,7 +13,13 @@ import (
 	"go.uber.org/zap"
 )
 
-var configFile string
+var (
+	configFile string
+
+	// These variables are set in build step
+	GitCommit = "unknown"
+	Version   = "dev"
+)
 
 func init() {
 	flag.StringVar(&configFile, "config", "", "config file path")
@@ -43,7 +49,7 @@ func main() {
 	defer logger.Flush(ctx)
 
 	logger.Info(ctx, "config loaded", zap.Any("config", appConfig))
-	logger.Info(ctx, "starting todo app")
+	logger.Info(ctx, "starting todo app", zap.String("version", Version), zap.String("git_commit", GitCommit))
 
 	// Start the todo app
 	err = Start(ctx, *appConfig, validator)
