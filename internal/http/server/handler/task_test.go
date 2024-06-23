@@ -95,28 +95,6 @@ func TestCreateTask(t *testing.T) {
 		require.JSONEq(t, string(expectedBody), rec.Body.String())
 	})
 
-	t.Run("default status value", func(t *testing.T) {
-		m := setup(t)
-
-		// prepare
-		name := gofakeit.Name()
-		payload := fmt.Sprintf(`{"name":"%s"}`, name)
-		c, rec := m.prepareContext(strings.NewReader(payload))
-
-		task := models.Task{}
-		err := gofakeit.Struct(&task)
-		require.NoError(t, err)
-
-		// stubs
-		createParams := fmt.Sprintf(`{"name":"%s","status":0}`, name)
-		m.mockTaskCtl.EXPECT().Create(gomock.Any(), EqJSON(t, createParams)).Return(&task, nil)
-
-		// assert
-		err = m.handler.CreateTask()(c)
-		require.NoError(t, err)
-		require.Equal(t, http.StatusOK, rec.Code)
-	})
-
 	t.Run("bad request", func(t *testing.T) {
 		testCases := []struct {
 			name        string
@@ -124,8 +102,12 @@ func TestCreateTask(t *testing.T) {
 			errContains string
 		}{{
 			name:        "empty name",
-			payload:     `{"name":""}`,
+			payload:     `{"name":"","status":0}`,
 			errContains: `'request.Name' Error:Field validation for 'Name' failed on the 'required' tag`,
+		}, {
+			name:        "empty status",
+			payload:     `{"name":"test"}`,
+			errContains: `'request.Status' Error:Field validation for 'Status' failed on the 'required' tag`,
 		}, {
 			name:        "invalid json",
 			payload:     `{"name":}`,
