@@ -7,7 +7,7 @@ on:
       - develop
       - ci/**
     tags:
-      - "v*"
+      - "*-v*"
 
   pull_request:
     paths:
