@@ -1,5 +1,16 @@
 # Todo-Go
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Project Structure](#project-structure)
+- [How to Run](#how-to-run)
+- [How to Build](#how-to-build)
+- [How to Test](#how-to-test)
+- [How to Release](#how-to-release)
+- [GitHub Actions (CI)](#github-actions)
+- [Contact](#contact)
+
 ## Overview
 
 - This is a web server for creating, listing, updating, and deleting tasks.
@@ -40,7 +51,7 @@
     └── validator
 ```
 
-## How to run
+## How to Run
 
 ### Pull image from DockerHub
 
@@ -54,16 +65,32 @@ docker run -p 8080 dragon0huang/todo-go:latest
 docker compose up
 ```
 
-### Local run
+### Local Run
 
 ```
 make todo
 ```
 
-## How to build
+### Environments
+
+1. Set Env
+
+```sh
+export HTTP_SERVER__ADDR_PORT=127.0.0.1:8080
+```
+
+2. Using [toml config file](./cmd/todo/config/config.toml)
+
+## How to Build
 
 ```sh
 make build
+```
+
+## How to Test
+
+```sh
+go test ./...
 ```
 
 ## How to Release
@@ -75,22 +102,12 @@ git tag todo-v1.0.0
 git push origin todo-v1.0.0
 ```
 
-## Environments
-
-1. Set Env
-
-```sh
-export HTTP_SERVER__ADDR_PORT=127.0.0.1:8080
-```
-
-2. Using [toml config file](./cmd/todo/config/config.toml)
-
 #### Note
 
 - Env will override variables from the config file
 - Set `OPERATION__LOG_LEVEL` to `debug` will also set logger to debug mode.
 
-## GitHub Actions (CI)
+## GitHub Actions
 
 - When you push to specified branches or create a pull request, two workflows are triggered:
   1. Validate the code by running linter checks, tests, and builds.
