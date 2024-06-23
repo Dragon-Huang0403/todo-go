@@ -46,8 +46,8 @@ func (h *Handler) ListTasks() echo.HandlerFunc {
 // @Router			/tasks [post]
 func (h *Handler) CreateTask() echo.HandlerFunc {
 	type request struct {
-		Name   string            `json:"name" validate:"required"`
-		Status models.TaskStatus `json:"status" validate:"oneof=0 1" default:"0"`
+		Name   string             `json:"name" validate:"required"`
+		Status *models.TaskStatus `json:"status" validate:"required,oneof=0 1"`
 	}
 	type response struct {
 		Data models.Task `json:"data" validate:"required"`
@@ -63,7 +63,7 @@ func (h *Handler) CreateTask() echo.HandlerFunc {
 
 		task, err := h.controller.Task.Create(ctx, controller.CreateTaskParams{
 			Name:   req.Name,
-			Status: req.Status,
+			Status: *req.Status,
 		})
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, echo.ErrInternalServerError)
