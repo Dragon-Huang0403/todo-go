@@ -85,6 +85,11 @@ export HTTP_SERVER__ADDR_PORT=127.0.0.1:8080
 
 2. Using [toml config file](./cmd/todo/config/config.toml)
 
+#### Note
+
+- Env will override variables from the config file
+- Set `OPERATION__LOG_LEVEL` to `debug` will also set logger to debug mode.
+
 ## GitHub Actions (CI)
 
 - When you push to specified branches or create a pull request, two workflows are triggered:
